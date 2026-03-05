@@ -82,5 +82,6 @@ async def logout(request: Request, response: Response):
         httponly=True,
         samesite="lax"
     )
+   
     
     return response
