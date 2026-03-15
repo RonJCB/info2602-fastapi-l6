@@ -63,7 +63,7 @@ def delete_todo_action(request: Request, id: int, db:SessionDep, user:AuthDep):
 @todo_router.get('/editTodo/{id}')
 def edit_todo_page(request: Request, id: int, db:SessionDep, user:AuthDep):
     todo = db.exec(select(Todo).where(Todo.id == id, Todo.user_id == user.id)).one_or_none()
-    todos = []
+    todos = db.exec(select(Todo).where(Todo.id == id, Todo.user_id == user.id)).all()
 
     if not todo:
         flash(request, 'Invalid id or unauthorized')

@@ -26,8 +26,7 @@ async def stats_page(
     )
 
 @stats_router.get("/todo-stats")
-async def stats_page(
-    request: Request,
+async def stats_page(    request: Request,
     user: AdminDep,
     db: SessionDep
 ):
