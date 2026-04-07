@@ -60,12 +60,12 @@
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-<main class="container" style="padding-top:100px">
-  <secion class="col m12">
+<main class="container"  style="padding-top:100px">
+  <section class="col m12">
     <figure class="highcharts-figure">
-      <div id="container"></div>
+      <div id="container" style="height: 400px;"></div>
     </figure>
-  </secion>
+  </section>
 </main>
 <script>
 
@@ -108,8 +108,8 @@
   }
 
   function convertData(data){
-    res = []
-    for(user in data){
+    let res = []
+    for(let user in data){
       res.push({
         name:user,
         y: data[user]
@@ -127,7 +127,9 @@
 
   }
 
+  document.addEventListener("DOMContentLoaded", () => {
   getData();
+});
 
 </script>
 {% endblock %}
