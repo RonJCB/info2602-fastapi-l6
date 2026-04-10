@@ -24,7 +24,7 @@ def initialize():
 
         db.add_all([bob_db, rick_db, sally_db, pam_db])  #add all can save multiple objects at once
         db.commit()
-
+#ALWAYS INITIALIZE FOREIGN KEYS WHEN CREATING MODELS
         with open('todos.csv') as file:
             reader = csv.DictReader(file)
             for row in reader:
