@@ -32,7 +32,71 @@ class AdminCreate(UserBase):
 class RegularUserCreate(UserBase):
     role:str = "regular_user"
 
+class UserBase(SQLModel,):
+    username: str = Field(index=True, unique=True)
+    email: EmailStr = Field(index=True, unique=True)
+    password: str
 
+class User(UserBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    def check_password(self, plaintext_password:str):
+        return PasswordHash.recommended().verify(password=plaintext_password, hash=self.password)
+
+    user_comments:list['Comment'] = Relationship(back_populates = "user")#1
+    user_reactions:list['Reactions'] = Relationship(back_populates = "user")#1
+
+class Album(SQLModel, table = True):
+      id: Optional[int] = Field(default=None, primary_key=True)
+      name:Optional[str] = Field(default = "")
+      artist:Optional[str]=Field(default = "")
+      image:Optional[str]=Field(default = "")
+      album_tracks:list['AlbumTrack'] = Relationship(back_populates = "album")#2
+
+
+
+class AlbumTrack(SQLModel, table=  True):
+      id: Optional[int] = Field(default=None, primary_key=True)
+      track_title:Optional[str]
+      album_id:int = Field(foreign_key = "album.id")
+      
+      album:Album = Relationship(back_populates= "album_tracks")#2
+
+      album_comments:list['Comment'] = Relationship(back_populates = "albumtrack")#3
+      albumtrack_reactions:list['Reactions'] = Relationship(back_populates = "albumtrack")#4
+
+      def numComments(self):
+
+       return len(self.album_comments)
+      def reactions(self):
+        return len(self.albumtrack_reactions)
+      
+class Comment(SQLModel, table = True):
+      id: Optional[int] = Field(default=None, primary_key=True)
+      user_id:int = Field(foreign_key = "user.id")
+      albumtrack_id:int = Field(foreign_key = "albumtrack.id")
+      text:str
+      albumtrack:AlbumTrack = Relationship(back_populates = "album_comments")#3
+      user:User = Relationship(back_populates = "user_comments")#1
+
+
+class Reactions(SQLModel, table = True):
+     user_id:int = Field(foreign_key = "user.id", primary_key = True)
+     albumtracktrack_id:int = Field(foreign_key = "albumtrack.id", primary_key = True)
+     
+     likes:int =0
+     dislikes:int =0
+     albumtrack:AlbumTrack = Relationship(back_populates = "albumtrack_reactions")#4
+     user:'User' = Relationship(back_populates = "user_reactions")#1
+  
+     def numLikes(self):
+          return self.likes
+     def numDislikes(self):
+          return self.dislikes
+     def like(self):
+          self.likes+=1
+     def dislike(self):
+          self.dislikes+=1
 class TodoCategory(SQLModel, table=True):
     category_id: int = Field(foreign_key="category.id", primary_key=True)
     todo_id: int = Field(foreign_key="todo.id", primary_key=True)
